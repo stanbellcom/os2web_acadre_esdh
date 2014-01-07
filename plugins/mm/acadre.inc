@@ -108,7 +108,7 @@ function os2web_acadre_esdh_mm_import_meeting($meeting) {
           'type' => (int) array_shift($xml_item->xpath('field/@type')),
         );
         if ($agendainfo['publish'] === 1 &&
-            $agendainfo['access'] !== 'Lukket' &&
+            //$agendainfo['access'] !== 'Lukket' && stan@bellcom.dk: accepting closed agendas
             $agendainfo['filesfolder'] != '') {
           $agenda_uri = implode('/', array(
             variable_get('os2web_meetings_path', ACADRE_MM_IMPORT_DIR),
