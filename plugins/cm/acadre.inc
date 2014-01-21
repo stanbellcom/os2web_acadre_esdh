@@ -132,12 +132,21 @@ function ops2web_acadre_esdh_get_case_docs($case_id) {
     $case_id = ops2web_acadre_esdh_lookup_case($case_id);
   }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> ba0bf183cc167c8d5c42a5ea28f032b256e71e14
   $docids = array();
   if ($docs = $pws->getCaseDocs($case_id)) {
     foreach ($docs as $doc) {
       $docids[] = (int) $doc->Document->DocumentIdentifier;
     }
+<<<<<<< HEAD
   }
+=======
+
+ }
+>>>>>>> ba0bf183cc167c8d5c42a5ea28f032b256e71e14
   return $docids;
 }
 

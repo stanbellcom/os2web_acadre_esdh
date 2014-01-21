@@ -27,6 +27,7 @@ function os2web_acadre_esdh_ctools_plugin_directory($module, $plugin) {
  * Add configuration to the settings form.
  */
 function os2web_acadre_esdh_form_os2web_settings_settings_form_alter(&$form, &$form_state) {
+
   // MM configuration.
   $form['meetings'] = array(
     '#type' => 'fieldset',
@@ -48,6 +49,14 @@ function os2web_acadre_esdh_form_os2web_settings_settings_form_alter(&$form, &$f
     '#description' => 'Komma sepereret liste over udvalgs-id der er godkendt til publisering.',
     '#default_value' => variable_get('os2web_meetings_approved_committee', ACADRE_MM_DEFAULT_APPROVED),
   );
+
+  $form['meetings']['os2web_meetings_import_closed_agenda'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Import closed agenda'),
+    '#description'=>t('This decides if closed agenda is or is not to be imported'),
+    '#default_value' => variable_get('os2web_meetings_import_closed_agenda', false),
+  );
+      
 
   // CM Configuration.
   $form['os2web_pws_config_group'] = array(
