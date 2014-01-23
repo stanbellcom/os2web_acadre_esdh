@@ -109,7 +109,9 @@ function os2web_acadre_esdh_mm_import_meeting($meeting) {
         );
 
         if ($agendainfo['publish'] === 1 && 
-             ($agendainfo['access'] !== 'Lukket' || ($agendainfo['access'] === 'Lukket'&&variable_get('os2web_meetings_import_closed_agenda', false))) &&// stan@bellcom.dk: accepting closed agendas
+            ($agendainfo['access'] !== 'Lukket' ||
+              ($agendainfo['access'] === 'Lukket' &&
+              variable_get('os2web_meetings_import_closed_agenda', false))) &&
             $agendainfo['filesfolder'] != '') {
           $agenda_uri = implode('/', array(
             variable_get('os2web_meetings_path', ACADRE_MM_IMPORT_DIR),
@@ -291,7 +293,8 @@ function _os2web_acadre_esdh_import_item($info, $xml) {
   $debug && error_log('MM Import - Import item from XML - id=' . $id . ' - ' . timer_read('mm_import') . 'ms');
 
   // Process attachments.
-  if ($item['access'] !== 'Lukket'||variable_get('os2web_meetings_import_closed_agenda', false)){
+  if ($item['access'] !== 'Lukket' ||
+      variable_get('os2web_meetings_import_closed_agenda', false)){
     foreach ($xml->xpath("table[@name='bullet']") as $bullet_xml) {
       if (($bullet = _os2web_acadre_esdh_import_bullet($info, $bullet_xml)) !== FALSE) {
         if (is_int($bullet['sort']) && $bullet['sort'] > 0) {
