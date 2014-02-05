@@ -109,9 +109,7 @@ function os2web_acadre_esdh_mm_import_meeting($meeting) {
         );
 
         if ($agendainfo['publish'] === 1 && 
-            ($agendainfo['access'] !== 'Lukket' ||
-              ($agendainfo['access'] === 'Lukket' &&
-              variable_get('os2web_meetings_import_closed_agenda', false))) &&
+             ($agendainfo['access'] !== 'Lukket' || ($agendainfo['access'] === 'Lukket'&&variable_get('os2web_meetings_import_closed_agenda', false))) &&// stan@bellcom.dk: accepting closed agendas
             $agendainfo['filesfolder'] != '') {
           $agenda_uri = implode('/', array(
             variable_get('os2web_meetings_path', ACADRE_MM_IMPORT_DIR),
@@ -205,6 +203,7 @@ function _os2web_acadre_esdh_import_meeting($info) {
       $meeting['location'] = (string) array_shift($xml->xpath("//table[@name='meeting']/fields/field[@name='location']"));
     }
 
+
     // Full Doc:
     $meeting['full_doc'] = array(
       'uri' => implode('/', array(
@@ -235,12 +234,6 @@ function _os2web_acadre_esdh_import_meeting($info) {
 	$meeting['participants'][] = (string) array_shift($participant->xpath("fields/field[@name='name']"));
     }
 
-
-    //Participants
-    $participants = $xml->xpath("//table[@name='committee']/table[@name='commember']/table[@name='member']");
-    foreach ($participants as $participant) {
-    $meeting['participants'][] = (string) array_shift($participant->xpath("fields/field[@name='name']"));
-    }
 
     foreach ($xml->xpath("//table[@name='agendaitemparents']") as $item_xml) {
       $item_content_xml = array_shift($item_xml->xpath("table[@name='agendaitem']"));
@@ -292,36 +285,36 @@ function _os2web_acadre_esdh_import_item($info, $xml) {
 
   $debug && error_log('MM Import - Import item from XML - id=' . $id . ' - ' . timer_read('mm_import') . 'ms');
 
-  // Process attachments.
-  if ($item['access'] !== 'Lukket' ||
-      variable_get('os2web_meetings_import_closed_agenda', false)){
-    foreach ($xml->xpath("table[@name='bullet']") as $bullet_xml) {
-      if (($bullet = _os2web_acadre_esdh_import_bullet($info, $bullet_xml)) !== FALSE) {
-        if (is_int($bullet['sort']) && $bullet['sort'] > 0) {
-          $item['bullets'][$bullet['sort'] - 1] = $bullet;
-        }
-        else {
-          $item['bullets'][] = $bullet;
-        }
-      }
-    }
-    // Process enclosures.
-    foreach ($xml->xpath("table[@name='enclosure']") as $enclosure) {
-      $filename_in = (string) array_shift($enclosure->xpath("fields/field[@name='filename']"));
-      if (strlen($filename_in) > 0) {
-        $item['enclosures'][] = array(
-          'uri' => implode('/', array(
-            variable_get('os2web_meetings_path', ACADRE_MM_IMPORT_DIR),
-            $info['filesfolder'],
-            $filename_in)),
-          'title' => trim((string) array_shift($enclosure->xpath("fields/field[@name='name']"))),
-          'access' => ACADRE_MM_ACCESS_OPEN == (int) array_shift($enclosure->xpath("fields/field[@name='access']")),
-        );
-      }
-    }
-  } 
 
-  $item += os2web_esdh_provider_default_item();
+  // Process attachments.
+  if ($item['access'] !== 'Lukket'||variable_get('os2web_meetings_import_closed_agenda', false)){
+  foreach ($xml->xpath("table[@name='bullet']") as $bullet_xml) {
+    if (($bullet = _os2web_acadre_esdh_import_bullet($info, $bullet_xml)) !== FALSE) {
+      if (is_int($bullet['sort']) && $bullet['sort'] > 0) {
+        $item['bullets'][$bullet['sort'] - 1] = $bullet;
+      }
+      else {
+        $item['bullets'][] = $bullet;
+      }
+    }
+  }
+  // Process enclosures.
+  foreach ($xml->xpath("table[@name='enclosure']") as $enclosure) {
+    $filename_in = (string) array_shift($enclosure->xpath("fields/field[@name='filename']"));
+    if (strlen($filename_in) > 0) {
+      $item['enclosures'][] = array(
+        'uri' => implode('/', array(
+          variable_get('os2web_meetings_path', ACADRE_MM_IMPORT_DIR),
+          $info['filesfolder'],
+          $filename_in)),
+        'title' => trim((string) array_shift($enclosure->xpath("fields/field[@name='name']"))),
+        'access' => ACADRE_MM_ACCESS_OPEN == (int) array_shift($enclosure->xpath("fields/field[@name='access']")),
+      );
+    }
+  }
+ } 
+
+   $item += os2web_esdh_provider_default_item();
   return $item;
 }
 
