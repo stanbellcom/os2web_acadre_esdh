@@ -138,10 +138,11 @@ function ops2web_acadre_esdh_get_case_docs($case_id) {
     foreach ($docs as $doc) {
       $docids[] = (int) $doc->Document->DocumentIdentifier;
     }
-
+  }
+ return $docids;
  }
-  return $docids;
-}
+ 
+
 
 /**
  * Looks up a case if neccesary and return the metadata related to this case.
