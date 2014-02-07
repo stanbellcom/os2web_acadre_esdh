@@ -177,7 +177,7 @@ function _os2web_acadre_esdh_import_meeting($info) {
       'system_id' => $info['sysid'],
       'publication_id' => (string) array_shift($xml->xpath("//table[@name='agenda']/fields/field[@name='sysid']")),
       'creation_date' => strtotime((string) array_shift($xml->xpath("//table[@name='agenda']/fields/field[@name='producedate']"))),
-      'comments' => (string) array_shift($xml->xpath("//table[@name='agenda']/fields/field[@name='description']")),
+      'description' => (string) array_shift($xml->xpath("//table[@name='agenda']/fields/field[@name='description']")),
       'meeting_date_start' => (string) array_shift($xml->xpath("//table[@name='meeting']/fields/field[@name='date']")),
       'meeting_date_finish' => (string) array_shift($xml->xpath("//table[@name='meeting']/fields/field[@name='finish']")),
       'committee' => (string) array_shift($xml->xpath("//table[@name='committee']/fields/field[@name='name']")),
