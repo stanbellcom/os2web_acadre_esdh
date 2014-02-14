@@ -183,7 +183,8 @@ function _os2web_acadre_esdh_import_meeting($info) {
       'committee' => (string) array_shift($xml->xpath("//table[@name='committee']/fields/field[@name='name']")),
       'committee_id' => (string) array_shift($xml->xpath("//table[@name='committee']/fields/field[@name='sysid']")),
       'location' => (string) array_shift($xml->xpath("//table[@name='location']/fields/field[@name='name']")),
-      'items' => array(),
+      'special_conditions'=> (string) array_shift($xml->xpath("//table[@name='meeting']/fields/field[@name='description']")),  
+      'items' => array(),        
     );
     if (variable_get('os2web_acadre_add_committee_to_title', FALSE))
       $meeting['title']=$meeting['committee']." ".$meeting['title'];
