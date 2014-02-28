@@ -320,9 +320,8 @@ function _os2web_acadre_esdh_import_item($info, $xml) {
 	    foreach ($files as $file) {
 	      if (strpos(basename($file), 'eml.part1') === false) {//avoiding part1 file import - don't need it
 		$item['enclosures'][] = array(
-		  'sysid' => (int) array_shift($case_file->xpath("fields/field[@name='ID']")) . '_' . basename($file),
 		  'uri' => $folder_path . '/' . basename($file),
-		  'title' => 'Email_' . basename($file),
+		  'title' => 'Email_' . trim((string) array_shift($case_file->xpath("fields/field[@name='Title']"))),
 		  'filetype' => '.PDF',
 		  'type' => 'Sager',
                   'access' =>((string)array_shift($case_file->xpath("fields/field[@name='PublicAccessLevelName']"))=='Åben'),  
@@ -332,7 +331,6 @@ function _os2web_acadre_esdh_import_item($info, $xml) {
 	  } else {
 	    $uri = _os2web_acadre_esdh_pdf_file_path($folder_path, $filename_in);
 	    $item['enclosures'][] = array(
-	      'sysid' => (int) array_shift($case_file->xpath("fields/field[@name='ID']")). '_' . basename(trim((string) array_shift($case_file->xpath("fields/field[@name='FileNr']")))),
 	      'uri' => $uri,
 	      'title' => trim((string) array_shift($case_file->xpath("fields/field[@name='Title']"))),
 	      'filetype' => "." . (string) array_shift($case_file->xpath("fields/field[@name='DocumentExtension']")),
@@ -356,9 +354,8 @@ function _os2web_acadre_esdh_import_item($info, $xml) {
           foreach($files as $file) {
             if (strpos(basename($file),'eml.part1') === false){//avoiding part1 file import - don't need it
               $item['enclosures'][] = array(
-                'sysid' => (int) array_shift($enclosure->xpath("fields/field[@name='sysid']")) . '_' . basename($file),
                 'uri' => $folder_path . '/' . basename($file),
-                'title' => 'Email_' . basename($file),
+                'title' => 'Email_' . trim((string) array_shift($enclosure->xpath("fields/field[@name='name']"))),
                 'filetype' => '.PDF',
                 'type'=>'Bilag',	
                 'access' => ACADRE_MM_ACCESS_OPEN == (int) array_shift($enclosure->xpath("fields/field[@name='access']")),   
@@ -369,7 +366,6 @@ function _os2web_acadre_esdh_import_item($info, $xml) {
           $uri = _os2web_acadre_esdh_pdf_file_path($folder_path, $filename_in);
 
           $item['enclosures'][] = array(
-            'sysid' => (int) array_shift($enclosure->xpath("fields/field[@name='sysid']")),
             'uri' => $uri,
             'title' => trim((string) array_shift($enclosure->xpath("fields/field[@name='name']"))),
             'filetype' => (string) array_shift($enclosure->xpath("fields/field[@name='EnclosureFileType']")),
