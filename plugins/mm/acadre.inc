@@ -238,13 +238,6 @@ function _os2web_acadre_esdh_import_meeting($info) {
 	$meeting['participants'][] = (string) array_shift($participant->xpath("fields/field[@name='name']"));
     }
 
-
-    //Participants
-    $participants = $xml->xpath("//table[@name='committee']/table[@name='commember']/table[@name='member']");
-    foreach ($participants as $participant) {
-    $meeting['participants'][] = (string) array_shift($participant->xpath("fields/field[@name='name']"));
-    }
-
     foreach ($xml->xpath("//table[@name='agendaitemparents']") as $item_xml) {
       $item_content_xml = array_shift($item_xml->xpath("table[@name='agendaitem']"));
       if (($item = _os2web_acadre_esdh_import_item($info, $item_content_xml)) !== FALSE) {
