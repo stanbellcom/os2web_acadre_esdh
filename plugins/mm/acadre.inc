@@ -183,6 +183,7 @@ function _os2web_acadre_esdh_import_meeting($info) {
       'committee' => (string) array_shift($xml->xpath("//table[@name='committee']/fields/field[@name='name']")),
       'committee_id' => (string) array_shift($xml->xpath("//table[@name='committee']/fields/field[@name='sysid']")),
       'location' => (string) array_shift($xml->xpath("//table[@name='location']/fields/field[@name='name']")),
+      'agenda_name' => (string) array_shift($xml->xpath("//table[@name='agenda']/fields/field[@name='name']")),
       'special_conditions'=> (string) array_shift($xml->xpath("//table[@name='meeting']/fields/field[@name='description']")),  
       'items' => array(),        
     );
@@ -241,6 +242,7 @@ function _os2web_acadre_esdh_import_meeting($info) {
     foreach ($xml->xpath("//table[@name='agendaitemparents']") as $item_xml) {
       $item_content_xml = array_shift($item_xml->xpath("table[@name='agendaitem']"));
       if (($item = _os2web_acadre_esdh_import_item($info, $item_content_xml)) !== FALSE) {
+        $item['additional'] = (stripos($meeting['agenda_name'], 'tillæg') !== FALSE)? TRUE : FALSE;
         $meeting['items'][] = $item;
       }
     }
