@@ -246,6 +246,10 @@ function _os2web_acadre_esdh_import_meeting($info) {
     }
     // Apply defaults, just in case we missed something.
     $meeting += os2web_esdh_provider_default_meeting();
+   // if ($meeting['title']=='2/2014'){
+   // var_dump($meeting);
+   // die;
+   // }
     return $meeting;
   }
   else {
@@ -308,19 +312,32 @@ function _os2web_acadre_esdh_import_item($info, $xml) {
 	  $filetype = (string) array_shift($case_file->xpath("fields/field[@name='DocumentExtension']"));
 	  $folder_path = implode('/', array(variable_get('os2web_meetings_path', ACADRE_MM_IMPORT_DIR), $info['filesfolder']));
 	  if (strcasecmp($filetype, 'MSG') == 0) {
-	    $folder_path .= '/' . $filename_in . '_attachments'; // e.g. [...]/1709477.MSG_attachments
-	    $files = glob(drupal_realpath($folder_path) . '/*.pdf');
-	    foreach ($files as $file) {
-	      if (strpos(basename($file), 'eml.part1') === false) {//avoiding part1 file import - don't need it
-		$item['enclosures'][] = array(
-		  'uri' => $folder_path . '/' . basename($file),
-		  'title' => 'Email_' . trim((string) array_shift($case_file->xpath("fields/field[@name='Title']"))),
-		  'filetype' => '.PDF',
-		  'type' => 'Sager',
-                  'access' =>((string)array_shift($case_file->xpath("fields/field[@name='PublicAccessLevelName']"))=='Åben'),  
-		);
-	      }
-	    }
+	    $attachments_folder_path =$folder_path . '/' . $filename_in . '_attachments'; // e.g. [...]/1709477.MSG_attachments
+	    $files = glob(drupal_realpath($attachments_folder_path) . '/*.pdf');
+	    if (file_exists($attachments_folder_path)){
+                foreach ($files as $file) {
+                  if (strpos(basename($file), 'eml.part1') === false) {//avoiding part1 file import - don't need it
+                    $item['enclosures'][] = array(
+                      'uri' => $folder_path . '/' . basename($file),
+                      'title' => 'Email:' . trim((string) array_shift($case_file->xpath("fields/field[@name='Title']"))),
+                      'filetype' => '.PDF',
+                      'type' => 'Sager',
+                      'access' =>((string)array_shift($case_file->xpath("fields/field[@name='PublicAccessLevelName']"))=='Åben'),  
+                    );
+                  }
+                }
+            } else {
+                if (_os2web_acadre_esdh_similar_file_exists(drupal_realpath($folder_path . '/' . $filename_in))){
+                 $uri = _os2web_acadre_esdh_pdf_file_path($folder_path, $filename_in);
+                $item['enclosures'][] = array(
+                  'uri' => $uri,
+                  'title' =>'Email:' . trim((string) array_shift($case_file->xpath("fields/field[@name='Title']"))),
+                  'filetype' => "." . (string) array_shift($case_file->xpath("fields/field[@name='DocumentExtension']")),
+                  'type' => 'Sager',
+                  'access' => ((string)array_shift($case_file->xpath("fields/field[@name='PublicAccessLevelName']"))=='Åben'), 
+                 ); 
+              }
+          }
 	  } else {
 	    $uri = _os2web_acadre_esdh_pdf_file_path($folder_path, $filename_in);
 	    $item['enclosures'][] = array(
@@ -342,19 +359,35 @@ function _os2web_acadre_esdh_import_item($info, $xml) {
         $folder_path = implode('/', array(variable_get('os2web_meetings_path', ACADRE_MM_IMPORT_DIR),$info['filesfolder']));
 
         if (strcasecmp($filetype,'.msg') == 0){
-          $folder_path .= '/' . $filename_in . '_attachments';// e.g. [...]/1709477.MSG_attachments
-          $files = glob(drupal_realpath($folder_path) . '/*.pdf');
+          $attachments_folder_path=$folder_path . '/' . $filename_in . '_attachments';// e.g. [...]/1709477.MSG_attachments
+          $files = glob(drupal_realpath($attachments_folder_path) . '/*.pdf');
+          if (file_exists($attachments_folder_path)){
           foreach($files as $file) {
             if (strpos(basename($file),'eml.part1') === false){//avoiding part1 file import - don't need it
               $item['enclosures'][] = array(
                 'uri' => $folder_path . '/' . basename($file),
-                'title' => 'Email_' . trim((string) array_shift($enclosure->xpath("fields/field[@name='name']"))),
+                'title' => 'Email:' . trim((string) array_shift($enclosure->xpath("fields/field[@name='name']"))),
                 'filetype' => '.PDF',
                 'type'=>'Bilag',	
                 'access' => ACADRE_MM_ACCESS_OPEN == (int) array_shift($enclosure->xpath("fields/field[@name='access']")),   
               );
             }
+           }
           }
+          else{
+          if (_os2web_acadre_esdh_similar_file_exists(drupal_realpath($folder_path . '/' . $filename_in))){
+             $uri = _os2web_acadre_esdh_pdf_file_path($folder_path, $filename_in);
+
+          $item['enclosures'][] = array(
+            'uri' => $uri,
+            'title' => 'Email:' . trim((string) array_shift($enclosure->xpath("fields/field[@name='name']"))),
+            'filetype' => (string) array_shift($enclosure->xpath("fields/field[@name='EnclosureFileType']")),
+            'type'=>'Bilag',
+            'access' => ACADRE_MM_ACCESS_OPEN == (int) array_shift($enclosure->xpath("fields/field[@name='access']")), 
+
+           ); 
+          }
+         }
         } else {
           $uri = _os2web_acadre_esdh_pdf_file_path($folder_path, $filename_in);
 
