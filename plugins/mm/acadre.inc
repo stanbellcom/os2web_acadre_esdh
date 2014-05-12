@@ -438,6 +438,7 @@ function _os2web_acadre_esdh_import_bullet($info, $bullet_xml) {
   if ($bullet['body'] === '') {
     return FALSE;
   }
+ $bullet['body']= _acadre_esdh_mm_improve_body_html($bullet['body']);
   $bullet += os2web_esdh_provider_default_bullet();
   return $bullet;
 }
@@ -602,4 +603,24 @@ function _os2web_acadre_esdh_pdf_file_path($path, $name){
     return $pdf_path;
   else
     return $path . '/' . $name;
+}
+
+function _acadre_esdh_mm_improve_body_html($data) {
+  if (preg_match_all('#file:///[^"].*?"#', $data, $uri)) {
+   foreach ($uri[0] as $file) {
+     $file = str_replace('"', '', $file);
+     $uri_parts = explode('\\', $file);
+     $filename = trim(array_pop($uri_parts));
+     $folder_name = array_pop($uri_parts);
+     $file_realpath = drupal_realpath(implode('/', array(variable_get('os2web_meetings_path', ACADRE_MM_IMPORT_DIR), 'images', $folder_name, $filename)));
+     $dest_dir_realpath = drupal_realpath('public://') . '/acadre_images/' . $folder_name;
+     if (!is_file($dest_dir_realpath))
+       exec('mkdir -p ' . $dest_dir_realpath);
+     exec('cp ' . $file_realpath . ' ' . $dest_dir_realpath . '/' . $filename);
+     $new_uri = file_create_url(implode('/', array('public://', 'acadre_images', $folder_name, $filename)));
+            //modify uri
+     $data = str_replace($file, $new_uri, $data);
+   }
+  }
+  return $data;
 }
