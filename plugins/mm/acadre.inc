@@ -205,9 +205,10 @@ function _os2web_acadre_esdh_import_meeting($info) {
 
     
     // Fix location
-    if (empty($meeting['location'])){
+    if (empty($meeting['location']))
+      $meeting['location'] = (string) array_shift($xml->xpath("//table[@name='meeting']/fields/field[@name='address']"));
+    if (empty($meeting['location']))
       $meeting['location'] = (string) array_shift($xml->xpath("//table[@name='meeting']/fields/field[@name='location']"));
-    }
 
     // Full Doc:
     $meeting['full_doc'] = array(
