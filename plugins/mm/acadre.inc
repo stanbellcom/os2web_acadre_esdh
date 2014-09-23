@@ -289,9 +289,14 @@ function _os2web_acadre_esdh_import_item($info, $xml) {
   $case = (string) array_shift($xml_case);
   $case_id = (string) array_shift($xml_case_id);
 
+  $case_text = '';
+  if (isset($case) && isset($case_id)) {
+    $case_text = ' (' . $case . ' id: ' . $case_id . ') ';
+  }
+
   $item = array(
     'id' => $id,
-    'title' => 'Punkt ' . $id . ' (' . $case . ' id: ' . $case_id . ') ' . $name,
+    'title' => 'Punkt ' . $id . $case_text . $name,
     'access' => $access,
     'bullets' => array(),
     'enclosures' => array(),
