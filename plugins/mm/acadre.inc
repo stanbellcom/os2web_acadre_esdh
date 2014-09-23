@@ -280,14 +280,18 @@ function _os2web_acadre_esdh_import_item($info, $xml) {
   $xml_id = $xml->xpath("../fields/field[@name='sort']");
   $xml_name = $xml->xpath("fields/field[@name='name']");
   $xml_access = $xml->xpath("fields/field[@name='accessname']");
+  $xml_case = $xml->xpath("fields/field[@name='caseno']");
+  $xml_case_id = $xml->xpath("table/table/fields/field[@name='sysid']");
 
   $id = (int) array_shift($xml_id);
   $name = (string) array_shift($xml_name);
   $access = (string) array_shift($xml_access);
+  $case = (string) array_shift($xml_case);
+  $case_id = (string) array_shift($xml_case_id);
 
   $item = array(
     'id' => $id,
-    'title' => 'Punkt ' . $id . ' ' . $name,
+    'title' => 'Punkt ' . $id . ' (' . $case . ' id: ' . $case_id . ') ' . $name,
     'access' => $access,
     'bullets' => array(),
     'enclosures' => array(),
